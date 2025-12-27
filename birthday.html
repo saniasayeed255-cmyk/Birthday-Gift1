@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Birthday for Her</title>
+    <style>
+        /* --- THEME & COLORS --- */
+        :root {
+            --bg-blue: #ebf5ff;
+            --main-blue: #4a90e2;
+            --dark-blue: #2c3e50;
+            --border-blue: #b3d7ff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Comic Sans MS', cursive, sans-serif; }
+        body { background-color: var(--bg-blue); overflow: hidden; color: var(--dark-blue); }
+
+        /* --- NAVIGATION --- */
+        input[type="radio"] { display: none; }
+        .page {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+            background: var(--bg-blue); display: none; overflow-y: auto;
+            padding: 20px; text-align: center;
+        }
+        #p1:checked ~ #page1, #p2:checked ~ #page2, #p3:checked ~ #page3, 
+        #p4:checked ~ #page4, #p5:checked ~ #page5 { display: block; }
+
+        /* --- DOODLE DECORATIONS (Reference Style) --- */
+        .doodle {
+            position: fixed; top: 0; width: 80px; height: 120px;
+            border-left: 2px dashed var(--main-blue);
+            animation: swing 4s ease-in-out infinite alternate;
+            transform-origin: top; z-index: 5; pointer-events: none;
+        }
+        .doodle::after {
+            content: '✨'; position: absolute; bottom: -20px; left: -15px; font-size: 2rem;
+        }
+        .star { left: 10%; }
+        .heart { left: 85%; }
+        .heart::after { content: '🌙'; }
+        .moon { left: 50%; height: 200px; }
+        .moon::after { content: '💙'; }
+
+        @keyframes swing { from { transform: rotate(-10deg); } to { transform: rotate(10deg); } }
+
+        /* --- CURTAIN --- */
+        .curtain-container {
+            position: fixed; width: 100%; height: 100vh; z-index: 1000;
+            display: flex; transition: 1.5s;
+        }
+        .curtain { width: 50%; height: 100%; background: var(--main-blue); transition: 1.5s; }
+        .curtain-text {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            color: white; font-size: 2rem; border: 3px solid white; padding: 15px; z-index: 1001;
+        }
+        #start:checked ~ .curtain-container { transform: translateY(-100%); opacity: 0; visibility: hidden; }
+
+        /* --- MEDIA STYLING (Better Sizes) --- */
+        h1 { margin: 40px 0; font-size: 2.5rem; color: var(--main-blue); text-shadow: 1px 1px white; }
+        
+        .flex-container {
+            display: flex; flex-direction: column; align-items: center; gap: 40px;
+            padding-bottom: 120px;
+        }
+
+        .media-card {
+            width: 85%; max-width: 500px; /* Sized up but not screen-filling */
+            background: white; padding: 15px;
+            border: 2px solid var(--border-blue);
+            box-shadow: 8px 8px 0px var(--border-blue);
+            border-radius: 5px;
+        }
+        .media-card img, .media-card video { width: 100%; height: auto; border-radius: 3px; }
+
+        /* --- BUTTONS --- */
+        .btn-group { position: fixed; bottom: 20px; width: 100%; display: flex; justify-content: space-between; padding: 0 30px; z-index: 100; }
+        .btn {
+            background: var(--main-blue); color: white; padding: 10px 25px;
+            border-radius: 15px; cursor: pointer; border: 3px solid var(--dark-blue);
+            font-weight: bold; box-shadow: 4px 4px 0px var(--dark-blue);
+        }
+        .btn:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0px var(--dark-blue); }
+
+        /* --- IDENTITY PAGE --- */
+        .form-box { background: white; padding: 30px; border-radius: 20px; max-width: 450px; margin: 20px auto; border: 3px dashed var(--main-blue); }
+        .big-text { font-size: 1.8rem; font-weight: bold; display: block; margin: 20px 0; }
+        
+        .submit-wrapper { position: relative; display: inline-block; }
+        .lock-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 5; cursor: not-allowed;
+        }
+        #nickname:valid ~ #check-verify:checked ~ .submit-wrapper .lock-overlay { display: none; }
+        #nickname:valid ~ #check-verify:checked ~ .submit-wrapper .btn { background: #4caf50; }
+
+        .form-box { background: white; padding: 30px; border-radius: 20px; max-width: 450px; margin: 20px auto; border: 3px dashed var(--main-blue); }
+        input[type="text"] { width: 90%; padding: 10px; margin: 15px 0; border: 2px solid var(--border-blue); border-radius: 10px; outline: none; }
+        /* Preview Uploaded Pic */
+        #uploader { margin: 15px 0; }
+
+        /* --- FINAL POPPERS --- */
+        /* --- FORM BOX --- */
+        .form-box { background: white; padding: 30px; border-radius: 20px; max-width: 450px; margin: 20px auto; border: 3px dashed var(--main-blue); }
+        input[type="text"] { width: 90%; padding: 10px; margin: 15px 0; border: 2px solid var(--border-blue); border-radius: 10px; outline: none; }
+
+        /* --- POPPERS --- */
+        .pop { position: fixed; bottom: -100px; font-size: 5rem; z-index: 999; transition: 1.5s cubic-bezier(0.17, 0.67, 0.83, 0.67); opacity: 0; }
+        #p5:checked ~ .pop-l { left: 20px; bottom: 150px; transform: rotate(45deg); opacity: 1; }
+        #p5:checked ~ .pop-r { right: 20px; bottom: 150px; transform: rotate(-45deg); opacity: 1; }
+
+    </style>
+</head>
+<body>
+
+    <input type="checkbox" id="start">
+    <input type="radio" name="nav" id="p1" checked>
+    <input type="radio" name="nav" id="p2">
+    <input type="radio" name="nav" id="p3">
+    <input type="radio" name="nav" id="p4">
+    <input type="radio" name="nav" id="p5">
+
+    <div class="curtain-container">
+        <div class="curtain"></div>
+        <label for="start" class="curtain-text">Click to Open Your Gift</label>
+        <div class="curtain"></div>
+    </div>
+
+    <div class="doodle star"></div>
+    <div class="doodle moon"></div>
+    <div class="doodle heart"></div>
+
+    <div class="page" id="page1">
+        <h1>Reasons Why I Love You</h1>
+        <div class="flex-container">
+            <div class="media-card"><img src="rss1.png"></div>
+            <div class="media-card"><img src="rss2.png"></div>
+            <div class="media-card"> <p>These are only a few ss of our convo. But the reasons are endless. I don't wanna hold you up for your whole year. Enjoy it.</p> </div>
+            <div class="media-card"><img src="rss4.png"></div>
+            <div class="media-card"><img src="rss5.png"></div>
+        </div>
+        <div class="btn-group" style="justify-content: flex-end;">
+            <label for="p2" class="btn">Next &rarr;</label>
+        </div>
+    </div>
+
+    <div class="page" id="page2">
+        <h1>Memories of This Year</h1>
+        <div class="flex-container">
+            <div class="media-card"> <p>Us enjoying the Finale of Chuang Asia 2025 together and screaming and praying on top of our lungs. (T.T)</p></div>
+            <div class="media-card"><img src="p1.png"></div>
+            <div class="media-card"> <p>You telling me that I have been through a phase of yours. Maybe one of my best memories instead of US. (atp I should've just written "My memories of you" instead hehehe) =D</p></div>
+            <div class="media-card"><img src="p2.png"></div> 
+            <div class="media-card"> <p>You showing me vid of Dua but me only staring and admiring you morning beauty and cuteness :)</p></div>
+            <div class="media-card"><video src="vid1.mp4" controls></video></div>
+            <div class="media-card"> <p>One random night, us talking normally and me casually "realizing" how much I love you and playing this song on side.</p></div>
+            <div class="media-card"><img src="p3.png"></div>
+            <div class="media-card"> <p>Me finding out your location on google map and your building. (not me thinking of seeing you through the window)</p></div>
+            <div class="media-card"><img src="p4.png"></div> 
+            <div class="media-card"> <p>Us becoming each other's reason to survive in this cruel world. (ToT)!!</p></div>
+            <div class="media-card"><img src="p5.png"></div>
+            <div class="media-card"> <p>Us going through our "Khatti" time of our friendship and you posting your pic looking like a goddess. Then refusing to send me the pics. I was going insane (T.T)</p></div>
+            <div class="media-card"><img src="p6.jpg"></div>
+            <div class="media-card"> <p>Me searching through google and whole map like crazy trying to figure out your location with this pic. :) (don't call me stalker)</p></div>
+            <div class="media-card"><img src="p8.jpg"></div>
+            <div class="media-card"> <p>Last and the best, me (my pic) being on your wall. Best feeling I'll ever get.</p></div>
+            <div class="media-card"><img src="p7.jpg"></div>
+        </div>
+        <div class="btn-group">
+            <label for="p1" class="btn">Back</label>
+            <label for="p2" class="btn" style="visibility: hidden;"></label> <label for="p3" class="btn">Next &rarr;</label>
+        </div>
+    </div>
+
+    <div class="page" id="page3">
+        <h1>A Feast For Your Eyes</h1>
+        <div class="flex-container">
+            <div class="media-card"><img src="tae.jpg"></div>
+            <div class="media-card"><img src="HB.jpg"></div>
+            <div class="media-card"><img src="YJ.jpg"></div>
+            <div class="media-card"><img src="JM.jpg"></div>
+            <div class="media-card"><img src="SG.jpg"></div>
+            <div class="media-card"><img src="SH.jpg"></div>
+            <div class="media-card"><img src="SN.jpg"></div>
+            <div class="media-card"><img src="TS.jpg"></div>
+            <div class="media-card"><img src="ZH.jpg"></div>
+            <div class="media-card"><img src="AX.jpg"></div>
+            <div class="media-card"><img src="Jo.jpg"></div>
+        </div>
+        <div class="btn-group">
+            <label for="p2" class="btn">Back</label>
+            <label for="p4" class="btn">Next &rarr;</label>
+        </div>
+    </div>
+
+    <div class="page" id="page4">
+        <h1>Verification</h1>
+        <div class="form-box">
+            <p>Your nickname from me (write as many as you remember):</p>
+            <input type="text" id="nickname" required placeholder="Type here...">
+            
+            <p style="font-weight: bold; font-size: 1.4rem; margin: 15px 0;">Do you deserve the best in this world?</p>
+            <input type="checkbox" id="check-verify"> <span>Yes, I do!</span>
+
+            <p style="margin-top:20px;">Upload a photo of yourself, you haven't sent me yet:</p>
+            <input type="file" id="pic-upload">
+            
+            <p style="color: #4a90e2; font-size: 0.8rem; margin-top: 20px;">
+                📸 Take a screenshot of this before hitting submit!
+            </p>
+
+            <div class="submit-wrapper" style="margin-top: 20px;">
+                <div class="lock-overlay" title="Fill nickname and check the box first!"></div>
+                <label for="p5" class="btn">Submit</label>
+            </div>
+        </div>
+        <div class="btn-group">
+            <label for="p3" class="btn">Back</label>
+        </div>
+    </div>
+
+    <div class="page" id="page5">
+        <div class="pop pop-l">🎉</div>
+        <div class="pop pop-r">🎉</div>
+        
+        <h1 style="font-size: 3.5rem; margin-top: 50px;">HAPPY BIRTHDAY!</h1>
+        
+        <div class="form-box" style="max-width: 600px;">
+            <p style="font-size: 1.1rem; line-height: 1.8; text-align: left;">
+                My mama and Queen, <br><br>
+                This year has been incredible because of you. I don't want to write too much here, i just wanna say again and remind you for the whole year, <b>I LOVE YOU</b> <br><br>
+                You truly are the best.
+            </p>
+            
+            <div style="margin-top: 30px; border-top: 2px solid var(--bg-blue); padding-top: 20px;">
+                <p style="margin-bottom: 10px;">Listen to this voice note:</p>
+                <audio controls style="width: 100%;">
+                    <source src="WhatsApp Audio 2025-12-27 at 10.39.11 PM.mp4" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+            </div>
+        </div>
+
+        <div class="btn-group">
+            <label for="p4" class="btn">Back</label>
+        </div>
+    </div>
+</body>
